@@ -2,18 +2,29 @@ import { MessageCircle } from "lucide-react";
 import Header from "../components/Header";
 import Video from "../components/Video";
 import Module from "../components/Module";
-import { useAppSelector, useCurrentLesson } from "../store";
+import { useAppDispatch, useAppSelector, useCurrentLesson } from "../store";
 import { useEffect } from "react";
+import { loadCourse } from "../store/slices/player";
 
 export function Player() {
+
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(loadCourse())
+  }, [])
+
   const modules = useAppSelector((state) => {
-    return state.player.course.modules;
+    return state.player.course?.modules;
   });
 
   const { currentLesson } = useCurrentLesson();
 
   useEffect(() => {
-    document.title = `Assistindo: ${currentLesson.title}`;
+    if (currentLesson) {
+      document.title = `Assistindo: ${currentLesson.title}`;
+    }
   }, [currentLesson]);
 
   return (
@@ -35,27 +46,17 @@ export function Player() {
             className="w-80 border-l border-zinc-800 absolute top-0 right-0 bottom-0 bg-zinc-900 overflow-y-scroll
            scrollbar-thin scrollbar-track-zinc-950 scrollbar-thumb-zinc-800 divide-y-2 divide-zinc-900 "
           >
-            {modules.map((module, index) => {
-              return (
-                <Module
-                  key={module.id}
-                  moduleIndex={index}
-                  title={module.title}
-                  amountOfLessons={module.lessons.length}
-                />
-              );
-            })}
-
-            <Module
-              moduleIndex={2}
-              title="Desvendando o redux"
-              amountOfLessons={3}
-            />
-            <Module
-              moduleIndex={3}
-              title="Desvendando o redux"
-              amountOfLessons={3}
-            />
+            {modules &&
+              modules.map((module, index) => {
+                return (
+                  <Module
+                    key={module.id}
+                    moduleIndex={index}
+                    title={module.title}
+                    amountOfLessons={module.lessons.length}
+                  />
+                );
+              })}
           </aside>
         </main>
       </div>

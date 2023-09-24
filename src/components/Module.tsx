@@ -1,8 +1,7 @@
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { ChevronDown } from "lucide-react";
 import Lesson from "./Lesson";
-import { useAppSelector } from "../store";
-import { useDispatch } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../store";
 import { play } from "../store/slices/player";
 
 interface ModuloProps {
@@ -16,7 +15,7 @@ export default function Module({
   title,
   moduleIndex,
 }: ModuloProps) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const { currentLessonIndex, currentModuleIndex } = useAppSelector((state) => {
     const { currentLessonIndex, currentModuleIndex } = state.player;
@@ -25,7 +24,7 @@ export default function Module({
   });
 
   const lessons = useAppSelector((state) => {
-    const module = state.player.course.modules[moduleIndex];
+    const module = state.player?.course?.modules[moduleIndex];
     return module ? module.lessons : [];
   });
 
@@ -44,20 +43,21 @@ export default function Module({
 
       <Collapsible.Content>
         <nav className="relative flex flex-col gap-6 p-6">
-          {lessons.map((lesson, lessonIndex) => {
-            const isCurrent =
-              currentModuleIndex === moduleIndex &&
-              currentLessonIndex === lessonIndex;
-            return (
-              <Lesson
-                key={lesson.id}
-                title={lesson.title}
-                duration={lesson.duration}
-                isCurrent={isCurrent}
-                onPlay={() => dispatch(play([moduleIndex, lessonIndex]))}
-              />
-            );
-          })}
+          {lessons &&
+            lessons.map((lesson, lessonIndex) => {
+              const isCurrent =
+                currentModuleIndex === moduleIndex &&
+                currentLessonIndex === lessonIndex;
+              return (
+                <Lesson
+                  key={lesson.id}
+                  title={lesson.title}
+                  duration={lesson.duration}
+                  isCurrent={isCurrent}
+                  onPlay={() => dispatch(play([moduleIndex, lessonIndex]))}
+                />
+              );
+            })}
         </nav>
       </Collapsible.Content>
     </Collapsible.Root>
