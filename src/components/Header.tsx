@@ -1,7 +1,9 @@
-import { useCurrentLesson } from "../store";
+import { useCurrentLesson } from "../zustand-store";
+
 
 export default function Header() {
-  const { currentLesson, currentModule } = useCurrentLesson();
+
+  const { currentLesson, currentModule } = useCurrentLesson()
 
   return (
     <div className="flex flex-col gap-1 ">

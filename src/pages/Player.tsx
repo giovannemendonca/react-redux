@@ -2,28 +2,25 @@ import { MessageCircle } from "lucide-react";
 import Header from "../components/Header";
 import Video from "../components/Video";
 import Module from "../components/Module";
-import { useAppDispatch, useAppSelector, useCurrentLesson } from "../store";
 import { useEffect } from "react";
-import { loadCourse } from "../store/slices/player";
+import { useCurrentLesson, useStore } from "../zustand-store";
 
 export function Player() {
-
-
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(loadCourse())
-  }, [])
-
-  const modules = useAppSelector((state) => {
-    return state.player.course?.modules;
+  const { course, load } = useStore((store) => {
+    return {
+      course: store.course,
+      load: store.load,
+    };
   });
-
   const { currentLesson } = useCurrentLesson();
 
   useEffect(() => {
+    load();
+  }, []);
+
+  useEffect(() => {
     if (currentLesson) {
-      document.title = `Assistindo: ${currentLesson.title}`;
+      document.title = `${currentLesson.title} | Player`;
     }
   }, [currentLesson]);
 
@@ -46,8 +43,8 @@ export function Player() {
             className="w-80 border-l border-zinc-800 absolute top-0 right-0 bottom-0 bg-zinc-900 overflow-y-scroll
            scrollbar-thin scrollbar-track-zinc-950 scrollbar-thumb-zinc-800 divide-y-2 divide-zinc-900 "
           >
-            {modules &&
-              modules.map((module, index) => {
+            {course?.modules &&
+              course?.modules.map((module, index) => {
                 return (
                   <Module
                     key={module.id}
